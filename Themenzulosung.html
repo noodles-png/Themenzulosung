@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Themenzulosung</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      background: #fafafa;
+      color: #222;
+    }
+
+    h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    p.hint { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 500px) { .inputs { grid-template-columns: 1fr; } }
+
+    label { font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.3rem; }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      resize: vertical;
+    }
+    textarea:focus { outline: none; border-color: #555; }
+
+    button {
+      margin-top: 1.25rem;
+      padding: 0.6rem 1.5rem;
+      background: #222;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    button:hover { background: #444; }
+
+    .error { color: #c00; font-size: 0.85rem; margin-top: 0.75rem; }
+
+    table { width: 100%; margin-top: 1.5rem; border-collapse: collapse; }
+    th {
+      text-align: left;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #666;
+      border-bottom: 2px solid #ddd;
+      padding: 0.5rem 0.75rem;
+    }
+    td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #eee; }
+    tr:hover { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+
+<h1>Themenzulosung</h1>
+<p class="hint">Namen und Themen eingeben (je eins pro Zeile), dann losen.</p>
+
+<div class="inputs">
+  <div>
+    <label>Namen</label>
+    <textarea id="names" placeholder="Max Mustermann&#10;Anna Schmidt&#10;Lukas Weber"></textarea>
+  </div>
+  <div>
+    <label>Themen</label>
+    <textarea id="topics" placeholder="Netzwerktechnik&#10;IT-Sicherheit&#10;Datenbanken"></textarea>
+  </div>
+</div>
+
+<button onclick="draw()">Losen</button>
+<p class="error" id="err"></p>
+<div id="out"></div>
+
+<script>
+function draw() {
+  const names = lines('names'), topics = lines('topics');
+  const err = document.getElementById('err'), out = document.getElementById('out');
+  out.innerHTML = ''; err.textContent = '';
+
+  if (!names.length || !topics.length) { err.textContent = 'Bitte beide Felder ausfüllen.'; return; }
+  if (topics.length < names.length) { err.textContent = `Zu wenig Themen (${topics.length}) für ${names.length} Namen.`; return; }
+
+  // Fisher-Yates shuffle
+  const s = [...topics];
+  for (let i = s.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [s[i], s[j]] = [s[j], s[i]];
+  }
+
+  let html = '<table><tr><th>#</th><th>Name</th><th>Thema</th></tr>';
+  names.forEach((n, i) => {
+    html += `<tr><td>${i + 1}</td><td>${esc(n)}</td><td>${esc(s[i])}</td></tr>`;
+  });
+  out.innerHTML = html + '</table>';
+}
+
+function lines(id) {
+  return document.getElementById(id).value.split('\n').map(s => s.trim()).filter(Boolean);
+}
+
+function esc(s) {
+  const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+}
+</script>
+
+</body>
+</html>
