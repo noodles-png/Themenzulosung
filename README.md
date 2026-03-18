@@ -5,7 +5,7 @@ Eine kleine Webseite, die Namen und Themen per zufälliger Vergabe zuordnen und 
 Einfach die Webseite https://github.com/noodles-png/Themenzulosung.git aufrufen.
 
 ## Features
-- Zuordnung von Namen und Themen nach Zufallsprinzip
+- Zuordnung von Namen und Themen nach Zufallsprinzip (Fisher-Yates Shuffle)
 - Display der Paare
 
 ## License
